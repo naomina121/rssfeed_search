@@ -10,4 +10,4 @@
 4. Feedを取得したいURLを入力して実行します。
 5. 成功すれば、FeedURLを取得できます。
 
-![image](https://github.com/user-attachments/assets/6c505977-541b-4485-9376-eb16ebe84b6b)
+<img src="https://github.com/naomina121/rssfeed_search/raw/main/rss_cat.png" width="256" height="256">
