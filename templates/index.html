@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>フィードURL確認フォーム</title>
+    <link
+      rel="shortcut icon"
+      href="{{ url_for('static', filename='favicon.ico') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>フィードURL確認フォーム</h1>
+      <form id="feedForm">
+        <label for="website_url">ウェブサイトのURL:</label>
+        <input
+          type="url"
+          id="website_url"
+          name="website_url"
+          placeholder="https://example.com"
+          required
+        />
+        <button type="submit">チェック</button>
+      </form>
+      <div id="result" class="loading">結果はここに表示されます</div>
+    </div>
+
+    <script>
+      document
+        .getElementById("feedForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const urlInput = document.getElementById("website_url");
+          const resultDiv = document.getElementById("result");
+          const urlValue = urlInput.value; // URLを先に取得
+
+          resultDiv.textContent = "チェック中...";
+          resultDiv.className = "loading"; // classを初期化してloadingを追加
+
+          fetch("/check_feed", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json", // サーバーにJSONを期待することを伝える
+            },
+            body: JSON.stringify({ website_url: urlValue }), // 変数を使う
+          })
+            .then((response) => {
+              // レスポンスがJSON形式か確認
+              const contentType = response.headers.get("content-type");
+              if (!response.ok) {
+                // エラーレスポンスの場合、JSONを試みる
+                if (
+                  contentType &&
+                  contentType.indexOf("application/json") !== -1
+                ) {
+                  return response.json().then((errData) => {
+                    throw new Error(
+                      errData.error ||
+                        `サーバーエラー (ステータス: ${response.status})`
+                    );
+                  });
+                } else {
+                  // JSONでない場合はステータスコードでエラーを投げる
+                  throw new Error(
+                    `HTTPエラー (ステータス: ${response.status})`
+                  );
+                }
+              }
+              // 成功レスポンスでJSON形式を期待
+              if (
+                contentType &&
+                contentType.indexOf("application/json") !== -1
+              ) {
+                return response.json();
+              } else {
+                throw new Error(
+                  "サーバーからのレスポンスが予期しない形式です。"
+                );
+              }
+            })
+            .then((data) => {
+              resultDiv.className = ""; // classをクリア
+              if (data.feed_url) {
+                const link = document.createElement("a");
+                link.href = data.feed_url;
+                // textContent を使って安全にテキストを設定
+                link.textContent = data.feed_url;
+                link.target = "_blank";
+                link.rel = "noopener noreferrer"; // セキュリティ対策
+
+                resultDiv.innerHTML = "<strong>発見したフィードURL:</strong> "; // innerHTMLは最小限に
+                resultDiv.appendChild(link);
+              } else if (data.error) {
+                // サーバーからのエラーメッセージ (check_feedで返されたもの)
+                resultDiv.textContent = `エラー: ${data.error}`;
+                resultDiv.classList.add("error");
+              } else {
+                resultDiv.textContent = "フィードURLは見つかりませんでした。";
+              }
+            })
+            .catch((error) => {
+              console.error("Fetch処理中にエラー発生:", error);
+              resultDiv.className = "error"; // エラーclassを設定
+              // ユーザーフレンドリーなエラーメッセージ
+              resultDiv.textContent = `処理中にエラーが発生しました: ${error.message}`;
+            });
+        });
+    </script>
+  </body>
+</html>

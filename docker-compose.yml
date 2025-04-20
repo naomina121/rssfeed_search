@@ -1,7 +1,14 @@
-version: "3"
+version: "3.8"
 
 services:
-  web:
+  feed-checker: # サービス名を分かりやすく
     build: .
     ports:
       - "5000:5000"
+    # 開発時にコード変更を反映させたい場合 (本番では削除推奨)
+    volumes:
+    - .:/app
+    environment:
+      # Pythonのログ出力をバッファしない設定
+      - PYTHONUNBUFFERED=1
+      # 必要なら他の環境変数もここに追加
