@@ -1,6 +1,6 @@
 # RssFeedSearchとは
 
-![rss_cat](rss_cat.png)
+<img src="https://github.com/naomina121/rssfeed_search/raw/main/rss_cat.png" width="256" height="256">
 
 入力したURLに応じてフィードURLを検出するアプリです。
 
@@ -10,4 +10,4 @@
 4. Feedを取得したいURLを入力して実行します。
 5. 成功すれば、FeedURLを取得できます。
 
-<img src="https://github.com/naomina121/rssfeed_search/raw/main/rss_cat.png" width="256" height="256">
+![feed](image.png)
