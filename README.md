@@ -1,5 +1,7 @@
 # RssFeedSearchとは
 
+![rss_cat](rss_cat.png)
+
 入力したURLに応じてフィードURLを検出するアプリです。
 
 1. このリポジトリをクローンします。
@@ -9,4 +11,3 @@
 5. 成功すれば、FeedURLを取得できます。
 
 ![image](https://github.com/user-attachments/assets/6c505977-541b-4485-9376-eb16ebe84b6b)
-
